@@ -75,7 +75,7 @@ app.get('/api/export', (req, res) => {
     res.setHeader('Content-Disposition', 'attachment; filename="inventory.csv"');
 
     // Make CSV string
-    const headers = ['Barcode', 'Name', 'Category', 'Quantity', 'Expiry Date', 'Refundable', 'Date Added'];
+    const headers = ['Barcode', 'Name', 'Category', 'Quantity', 'Price', 'Expiry Date', 'Refundable', 'Date Added'];
     const csvRows = [headers.join(',')];
     rows.forEach(r => {
       csvRows.push([
@@ -83,6 +83,7 @@ app.get('/api/export', (req, res) => {
         `"${(r.productName || '').replace(/"/g, '""')}"`,
         `"${(r.category || '').replace(/"/g, '""')}"`,
         r.quantity,
+        r.price || 0.0,
         r.expiryDate,
         r.isRefundable ? 'Yes' : 'No',
         r.dateAdded
@@ -108,6 +109,7 @@ async function fetchFromOpenFoodFacts(barcode) {
         productName: p.product_name || p.generic_name || 'Unknown Product',
         category: (p.categories_tags && p.categories_tags[0] ? p.categories_tags[0].replace('en:', '') : '') || '',
         imageUrl: p.image_url || p.image_front_url || null,
+        price: '', // External APIs usually don't have accurate retail price
         source: 'external'
       };
     }
@@ -143,15 +145,15 @@ app.get('/api/products/:barcode', async (req, res) => {
 
 // Create product
 app.post('/api/products', upload.single('image'), (req, res) => {
-  const { barcode, productName, category, quantity, expiryDate, isRefundable, dateAdded } = req.body;
+  const { barcode, productName, category, quantity, price, expiryDate, isRefundable, dateAdded } = req.body;
   let imageUrl = req.body.imageUrl || null;
   if (req.file) {
     imageUrl = `/uploads/${req.file.filename}`;
   }
 
   const lastUpdated = new Date().toISOString();
-  const sql = `INSERT INTO products (barcode, productName, quantity, expiryDate, imageUrl, isRefundable, dateAdded, lastUpdated, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  const params = [barcode, productName, quantity, expiryDate, imageUrl, isRefundable ? 1 : 0, dateAdded, lastUpdated, category || ''];
+  const sql = `INSERT INTO products (barcode, productName, quantity, price, expiryDate, imageUrl, isRefundable, dateAdded, lastUpdated, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  const params = [barcode, productName, quantity, parseFloat(price) || 0, expiryDate, imageUrl, isRefundable ? 1 : 0, dateAdded, lastUpdated, category || ''];
   
   db.run(sql, params, function(err) {
     if (err) {
@@ -164,20 +166,20 @@ app.post('/api/products', upload.single('image'), (req, res) => {
 
 // Update product
 app.put('/api/products/:barcode', upload.single('image'), (req, res) => {
-  const { productName, category, quantity, expiryDate, isRefundable } = req.body;
+  const { productName, category, quantity, price, expiryDate, isRefundable } = req.body;
   
   // If no new image, update without changing imageUrl
   if (req.file) {
     const imageUrl = `/uploads/${req.file.filename}`;
-    db.run(`UPDATE products SET productName = ?, category = ?, quantity = ?, expiryDate = ?, imageUrl = ?, isRefundable = ?, lastUpdated = ? WHERE barcode = ?`,
-      [productName, category || '', quantity, expiryDate, imageUrl, isRefundable ? 1 : 0, new Date().toISOString(), req.params.barcode],
+    db.run(`UPDATE products SET productName = ?, category = ?, quantity = ?, price = ?, expiryDate = ?, imageUrl = ?, isRefundable = ?, lastUpdated = ? WHERE barcode = ?`,
+      [productName, category || '', quantity, parseFloat(price) || 0, expiryDate, imageUrl, isRefundable ? 1 : 0, new Date().toISOString(), req.params.barcode],
       function(err) {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: "Product updated" });
       });
   } else {
-    db.run(`UPDATE products SET productName = ?, category = ?, quantity = ?, expiryDate = ?, isRefundable = ?, lastUpdated = ? WHERE barcode = ?`,
-      [productName, category || '', quantity, expiryDate, isRefundable ? 1 : 0, new Date().toISOString(), req.params.barcode],
+    db.run(`UPDATE products SET productName = ?, category = ?, quantity = ?, price = ?, expiryDate = ?, isRefundable = ?, lastUpdated = ? WHERE barcode = ?`,
+      [productName, category || '', quantity, parseFloat(price) || 0, expiryDate, isRefundable ? 1 : 0, new Date().toISOString(), req.params.barcode],
       function(err) {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: "Product updated" });

@@ -16,6 +16,7 @@ function App() {
     productName: '',
     category: '',
     quantity: 1,
+    price: '',
     expiryDate: '',
     isRefundable: false,
     imageFile: null,
@@ -66,6 +67,7 @@ function App() {
           productName: data.productName || '',
           category: data.category || '',
           quantity: data.quantity || 1,
+          price: data.price || '',
           expiryDate: data.expiryDate || '',
           isRefundable: data.isRefundable === 1,
           imageFile: null,
@@ -81,6 +83,7 @@ function App() {
           productName: '',
           category: '',
           quantity: 1,
+          price: '',
           expiryDate: '',
           isRefundable: false,
           imageFile: null,
@@ -205,6 +208,7 @@ function App() {
     data.append('productName', formData.productName);
     data.append('category', formData.category);
     data.append('quantity', formData.quantity);
+    data.append('price', formData.price);
     data.append('expiryDate', formData.expiryDate);
     data.append('isRefundable', formData.isRefundable);
     if (!isExisting) {
@@ -229,7 +233,7 @@ function App() {
       if (res.ok) {
         alert("Saved successfully!");
         setBarcode('');
-        setFormData({ productName: '', category: '', quantity: 1, expiryDate: '', isRefundable: false, imageFile: null, imageUrl: '' });
+        setFormData({ productName: '', category: '', quantity: 1, price: '', expiryDate: '', isRefundable: false, imageFile: null, imageUrl: '' });
         fetchProducts();
       }
     } catch (err) {
@@ -357,6 +361,17 @@ function App() {
               onChange={e => setFormData({...formData, quantity: parseInt(e.target.value)})}
             />
           </div>
+
+          <div className="form-group">
+            <label>Price ($)</label>
+            <input 
+              type="number" 
+              step="0.01"
+              min="0"
+              value={formData.price}
+              onChange={e => setFormData({...formData, price: e.target.value})}
+            />
+          </div>
           
           <div className="form-group">
             <label>Expiry Date</label>
@@ -442,6 +457,9 @@ function App() {
                 {p.category && <span style={{display: 'inline-block', backgroundColor: 'var(--primary-color)', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.7rem', marginBottom: '0.5rem'}}>{p.category}</span>}
                 <p><strong>Code:</strong> {p.barcode}</p>
                 <p><strong>QTY:</strong> {p.quantity}</p>
+                {p.price !== undefined && p.price !== null && (
+                  <p><strong>Price:</strong> ${Number(p.price).toFixed(2)}</p>
+                )}
                 {p.expiryDate && (
                   <p>
                     <strong>Exp:</strong> {p.expiryDate} 
