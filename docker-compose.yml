@@ -5,17 +5,16 @@ services:
   frontend:
     build:
       context: ./frontend
-    ports:
-      - "4000:80"
+    expose:
+      - "80"
     depends_on:
       - backend
 
   backend:
     build:
       context: ./backend
-    # Coolify typically maps internal container ports directly in its UI, but this is safe
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     environment:
       - PORT=3000
       - NODE_ENV=production
