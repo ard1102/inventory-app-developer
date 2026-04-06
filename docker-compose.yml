@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # The Nginx container will serve the frontend on port 80 and reverse-proxy API calls
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "4000:80"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+    # Coolify typically maps internal container ports directly in its UI, but this is safe
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - APP_TOKEN=${APP_TOKEN:-default_secret_token}
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend/data:/app/data
+
+# Declare the persistent named volumes on the host/VPS
+volumes:
+  inventory_uploads:
+  inventory_data:
