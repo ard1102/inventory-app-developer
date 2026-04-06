@@ -17,7 +17,9 @@ function App() {
     category: '',
     quantity: 1,
     price: '',
-    expiryDate: '',
+    expiryYear: '',
+    expiryMonth: '',
+    expiryDay: '',
     isRefundable: false,
     imageFile: null,
     imageUrl: ''
@@ -63,12 +65,15 @@ function App() {
         const data = await res.json();
         const isExternal = data.source === 'external';
         
+        const extExp = data.expiryDate ? data.expiryDate.split('-') : ['', '', ''];
         setFormData({
           productName: data.productName || '',
           category: data.category || '',
           quantity: data.quantity || 1,
           price: data.price || '',
-          expiryDate: data.expiryDate || '',
+          expiryYear: extExp[0] || '',
+          expiryMonth: extExp[1] || '',
+          expiryDay: extExp[2] || '',
           isRefundable: data.isRefundable === 1,
           imageFile: null,
           imageUrl: data.imageUrl || ''
@@ -84,7 +89,9 @@ function App() {
           category: '',
           quantity: 1,
           price: '',
-          expiryDate: '',
+          expiryYear: '',
+          expiryMonth: '',
+          expiryDay: '',
           isRefundable: false,
           imageFile: null,
           imageUrl: ''
@@ -203,13 +210,17 @@ function App() {
     e.preventDefault();
     if (!barcode) return alert("Please scan a barcode first");
 
+    const finalExpiry = (formData.expiryYear || formData.expiryMonth || formData.expiryDay) 
+      ? `${formData.expiryYear || new Date().getFullYear()}-${(formData.expiryMonth || '01').toString().padStart(2, '0')}-${(formData.expiryDay || '01').toString().padStart(2, '0')}`
+      : '';
+
     const data = new FormData();
     data.append('barcode', barcode);
     data.append('productName', formData.productName);
     data.append('category', formData.category);
     data.append('quantity', formData.quantity);
     data.append('price', formData.price);
-    data.append('expiryDate', formData.expiryDate);
+    data.append('expiryDate', finalExpiry);
     data.append('isRefundable', formData.isRefundable);
     if (!isExisting) {
       data.append('dateAdded', new Date().toISOString());
@@ -233,7 +244,7 @@ function App() {
       if (res.ok) {
         alert("Saved successfully!");
         setBarcode('');
-        setFormData({ productName: '', category: '', quantity: 1, price: '', expiryDate: '', isRefundable: false, imageFile: null, imageUrl: '' });
+        setFormData({ productName: '', category: '', quantity: 1, price: '', expiryYear: '', expiryMonth: '', expiryDay: '', isRefundable: false, imageFile: null, imageUrl: '' });
         fetchProducts();
       }
     } catch (err) {
@@ -375,11 +386,45 @@ function App() {
           
           <div className="form-group">
             <label>Expiry Date</label>
-            <input 
-              type="date" 
-              value={formData.expiryDate}
-              onChange={e => setFormData({...formData, expiryDate: e.target.value})}
-            />
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <input 
+                type="number" 
+                placeholder="DD" 
+                min="1" 
+                max="31"
+                value={formData.expiryDay}
+                onChange={e => setFormData({...formData, expiryDay: e.target.value})}
+                style={{ flex: 1 }}
+              />
+              <select 
+                value={formData.expiryMonth}
+                onChange={e => setFormData({...formData, expiryMonth: e.target.value})}
+                style={{ flex: 1 }}
+              >
+                <option value="">MM (Month)</option>
+                <option value="01">01 (Jan)</option>
+                <option value="02">02 (Feb)</option>
+                <option value="03">03 (Mar)</option>
+                <option value="04">04 (Apr)</option>
+                <option value="05">05 (May)</option>
+                <option value="06">06 (Jun)</option>
+                <option value="07">07 (Jul)</option>
+                <option value="08">08 (Aug)</option>
+                <option value="09">09 (Sep)</option>
+                <option value="10">10 (Oct)</option>
+                <option value="11">11 (Nov)</option>
+                <option value="12">12 (Dec)</option>
+              </select>
+              <input 
+                type="number" 
+                placeholder="YYYY" 
+                min="2020" 
+                max="2100"
+                value={formData.expiryYear}
+                onChange={e => setFormData({...formData, expiryYear: e.target.value})}
+                style={{ flex: 1 }}
+              />
+            </div>
           </div>
 
           <div className="form-group">
