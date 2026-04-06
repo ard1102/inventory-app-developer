@@ -327,18 +327,18 @@ function App() {
         <form className="glass-card animate-fade-in" onSubmit={handleSubmit}>
           {!isExisting && formData.productName && (
             <div style={{
-              backgroundColor: 'rgba(74, 144, 226, 0.1)', 
-              color: 'var(--primary-color)', 
+              backgroundColor: 'rgba(34, 197, 94, 0.1)', 
+              color: 'var(--success-color)', 
               padding: '0.8rem', 
-              borderRadius: '8px', 
+              borderRadius: '4px', 
               marginBottom: '1rem',
               fontSize: '0.9rem',
-              border: '1px solid var(--primary-color)',
+              border: '1px solid var(--success-color)',
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem'
             }}>
-              <span>🌐</span>
+              <span>✓</span>
               <span>Found product details online! Review and click Save to add to your local inventory.</span>
             </div>
           )}
@@ -499,7 +499,7 @@ function App() {
               )}
               <div className="product-info">
                 <h3 style={{marginBottom: '0.2rem'}}>{p.productName}</h3>
-                {p.category && <span style={{display: 'inline-block', backgroundColor: 'var(--primary-color)', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.7rem', marginBottom: '0.5rem'}}>{p.category}</span>}
+                {p.category && <span style={{display: 'inline-block', backgroundColor: 'var(--accent-color)', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.7rem', marginBottom: '0.5rem'}}>{p.category}</span>}
                 <p><strong>Code:</strong> {p.barcode}</p>
                 <p><strong>QTY:</strong> {p.quantity}</p>
                 {p.price !== undefined && p.price !== null && (

@@ -1,15 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-color: #0f172a;
-  --surface-color: rgba(30, 41, 59, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --accent-color: #3b82f6;
-  --accent-hover: #2563eb;
-  --danger-color: #ef4444;
-  --success-color: #10b981;
+  --bg-color: #020617;
+  --surface-color: #0F172A;
+  --glass-border: #1E293B;
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --accent-color: #22C55E;
+  --accent-hover: #16A34A;
+  --danger-color: #EF4444;
+  --success-color: #22C55E;
 }
 
 * {
@@ -19,42 +19,39 @@
 }
 
 body {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Fira Sans', sans-serif;
   background-color: var(--bg-color);
   color: var(--text-primary);
   min-height: 100vh;
-  background-image: radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent 400px),
-                    radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.15), transparent 400px);
-  background-attachment: fixed;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Fira Code', monospace;
 }
 
 .container {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 1.5rem 1rem;
 }
 
 h1 {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
   text-align: center;
-  margin-bottom: 2rem;
-  background: linear-gradient(135deg, #60a5fa, #3b82f6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
 }
 
-/* Glassmorphism Card */
+/* Data-Dense Card */
 .glass-card {
   background: var(--surface-color);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
 /* Form Styles */
@@ -104,10 +101,10 @@ input[type="checkbox"] {
 /* Buttons */
 .btn {
   display: inline-block;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 0.25rem;
   border: none;
-  font-family: inherit;
+  font-family: 'Fira Code', monospace;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -121,17 +118,17 @@ input[type="checkbox"] {
 }
 .btn-primary:hover {
   background: var(--accent-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-color);
   color: #fff;
   border: 1px solid var(--glass-border);
 }
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--surface-color);
+  border-color: var(--text-secondary);
 }
 
 /* Scanner styles */
@@ -163,25 +160,28 @@ input[type="checkbox"] {
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .product-item {
   display: flex;
   flex-direction: column;
+  padding: 1rem !important;
+  border-radius: 0.5rem;
+  cursor: pointer;
 }
 
 .product-item:hover {
-  transform: translateY(-5px);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--accent-color);
+  background: rgba(30, 41, 59, 0.3);
 }
 
 .product-img {
   width: 100%;
-  height: 200px;
+  height: 160px;
   object-fit: cover;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
+  border-radius: 0.25rem;
+  margin-bottom: 0.75rem;
   background: rgba(0,0,0,0.2);
 }
 
